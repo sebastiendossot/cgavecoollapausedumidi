@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   post '/home/vote' => 'home#vote'
   post '/home/simulation_vote' => 'home#simulation_vote'
   
+  devise_scope :user do
+    get '/users/sign_out' => 'devise/sessions#destroy'
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

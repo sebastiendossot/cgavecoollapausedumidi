@@ -7,11 +7,11 @@
     <%= form_for Proposition.new, :url => {:controller => "home", :action => "create_proposition"}, method: :post do |f| %>  
       <div>
         <%= f.text_field :proposition_1 %>
-        <%= f.label :proposition_1, 'Idée 1' %>
+        <%= f.label :proposition_1, 'Idée restaurant 1' %>
       </div>
       <div>
         <%= f.text_field :proposition_2 %>
-        <%= f.label :proposition_2, 'Idée 2' %>
+        <%= f.label :proposition_2, 'Idée restaurant 2' %>
       </div>
       <%= f.hidden_field :team_id , :value => @user.team.id %>
       <div class="actions">
