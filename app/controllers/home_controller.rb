@@ -72,6 +72,7 @@ class HomeController < ApplicationController
   def get_color(user)
     return "black"
   end
+  
   helper_method :no_proposition
   helper_method :get_todays_proposition
   helper_method :get_color
