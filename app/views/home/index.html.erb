@@ -1,0 +1,74 @@
+<% if user_signed_in? %>
+  <li>
+  <%= link_to('Logout', destroy_user_session_path, method: :delete) %>        
+  </li>
+  <h1>Au restaurant le midi tu dois aller.</h1>
+  <% if no_proposition %>
+    <%= form_for Proposition.new, :url => {:controller => "home", :action => "create_proposition"}, method: :post do |f| %>  
+      <div>
+        <%= f.text_field :proposition_1 %>
+        <%= f.label :proposition_1, 'Idée 1' %>
+      </div>
+      <div>
+        <%= f.text_field :proposition_2 %>
+        <%= f.label :proposition_2, 'Idée 2' %>
+      </div>
+      <%= f.hidden_field :team_id , :value => @user.team.id %>
+      <div class="actions">
+        <%= f.submit "Soumettre les idées de resto" %>
+      </div>
+    <% end %>
+  <%else%>
+    <% current_proposition = get_todays_proposition %>
+    <% if current_proposition.answers.where(user_id: @user.id).exists? %>
+      <% if current_proposition.answers.length < current_user.team.users.length %>
+        <li>
+          <b><%= current_proposition.proposition_1 %> </b> : <%= current_proposition.answers.where(:proposition_1 => true).length %> votes
+        </li>
+
+         <li>
+          <b><%= current_proposition.proposition_2 %> </b> : <%= current_proposition.answers.where(:proposition_2 => true).length %> votes
+        </li>
+        <%= button_to 'Simuler toute l\'équipe qui vote', method: :post, controller: 'home', action: 'simulation_vote', :params => {:proposition_id => current_proposition.id} %>
+      <%else%>
+        <% if current_proposition.answers.where(proposition_1: true).length >  current_proposition.answers.where(proposition_2: true).length %>
+          <p>La proposition <%=current_proposition.proposition_1 %> a gagné.</p>
+        <% elsif current_proposition.answers.where(proposition_1: true).length <  current_proposition.answers.where(proposition_2: true).length %>
+          <p>La proposition <%=current_proposition.proposition_2 %> a gagné.</p>
+        <% else %>
+          <p>Egalité dans la force il y a, un combat il y aura.</p>
+          <iframe src="https://giphy.com/embed/11ocEaLDZafNHa" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p>
+        <% end%>
+      <%end%>
+    <%else%>
+      <h3>Il faut que tu votes si tu veux pas te retrouver à manger au McDo :</h3>
+        <%= form_for Answer.new, :url => {:controller => "home", :action => "vote"}, method: :post do |f| %>  
+          
+          <div>
+            <%= f.check_box :proposition_1 %>
+            <%= f.label :proposition_1, current_proposition.proposition_1 %>
+          </div>
+          <div>
+            <%= f.check_box :proposition_2 %>
+            <%= f.label :proposition_2, current_proposition.proposition_2 %>
+          </div>
+          <%= f.hidden_field :proposition_id , :value => current_proposition.id %>
+          <%= f.hidden_field :user_id , :value => current_user.id %>
+        <div class="actions">
+          <%= f.submit "Voter" %>
+        </div>
+      <%end%>
+    <%end%>
+    <p>Liste de ta team</p>
+    <% @user.team.users.each do |user| %>
+        <li style='color:<%= get_color(user)%>'>
+          <%= user.email %>
+        </li>
+      <% end%>
+    <% end%>
+
+    <%= button_to 'Supprimer toutes les propositions', method: :post, controller: 'home', action: 'destroy_all_propositions' %>
+<% else %>
+  <%= link_to('Login', new_user_session_path) %>  
+  <%= link_to('Register', new_user_registration_path) %>
+<% end %>

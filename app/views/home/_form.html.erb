@@ -1,0 +1,10 @@
+<%= form_for @expense, remote: true, authenticity_token: true do |f| %>  
+  <%= f.select :receipt_type, @users.collect{|type| [type.titleize, type]}, {include_blank: true},  disabled:readonly, class: "mdb-select" %>
+  <%= f.label :is_gst_registered do %>
+    <%= t(".receipt_type")%>
+    <i class="fa fa-question-circle tooltip-clickable" data-toggle="collapse" href="#expenses_tooltip" aria-expanded="false" aria-controls="has_provisional_tax" ></i>
+  <% end %>
+  <%= f.submit t('global.actions.save'), class: "btn btn-primary btn-save", data: { disable_with: "Loading..." } %>
+</div>
+
+<% end %>
